@@ -1,0 +1,173 @@
+---
+layout: post
+title: CSS扩展语言简介
+identifier: 10001
+---
+
+
+对于UI开发人员来说，传统CSS编写工作量通常比较大且不易维护，如在众多的代码中查找并设置某一元素的颜色，定位处于某一层级关系下html元素。于是就诞生了众多针对CSS的扩展语言或者方法，这些扩展在使用上通常利用自己特有的语法进行CSS编然后通过某种途径（如编译等）将其转变为传统样式文件；在功能上这些扩展通常具有某些编程性的概念，比如为样式文件定义变量（甚至定义方法），设置层级关系等。
+
+在众多的CSS扩展中，本文要介绍的 "Less":http://www.lesscss.org 应该是使用最广泛的一种；同时本文也将介绍 "Sass":http://sass-lang.com/ ,它是ruby和rails阵营中较有名气的一个CSS扩展，即将被内置于rails 3.1中；同时笔者也发现目前一些Java框架如Play已经开始支持它了，就连.Net好像也有相关技术了。
+
+
+h2. 特性
+
+如上所述，Less和Sass都具有定义变量，嵌套，混合，支持操作符等一些共同特性，然后各自还具有一些自己独有的特点(例如二者均有自己用来处理颜色的函数)。感兴趣的话可以仔细去阅读各自的使用文档。
+
+h3. 变量
+
+请回忆这么一个痛苦的场景: 一个CSS文件中定义了多个页面元素的颜色，现在需要改变某几个相同的颜色("Oh my god", 我已经听见这种声音了）。Less和Sass大显身手的时候到了，它们都具有定义变量的功能，可在CSS中预先定义好多个颜色变量然后在需要的地方直接引用。
+
+以Less代码为例（Sass同理）
+
+{% highlight ruby %}
+
+@main_color: #ce4dd6;
+@style: solid;
+@bodyWidth: 800px;
+
+#navbar {
+    color: @main_color;
+    border-bottom: @style 1px red;
+    width: @bodyWidth - 100px;
+}
+
+{% endhighlight %}
+
+编译后为：
+
+{% highlight css %}
+#navbar {
+  color: #ce4dd6;
+  border-bottom: solid 1px red;
+  width: 700px;
+}
+{% endhighlight %}
+
+颜色和像素定义还不够？好吧，你还需要设定页面默认的字体大小吧，各种h1，h2，h3的字体还需要递增吧。。。。
+
+还不满足？仔细看看代码吧，Less和Sass均支持变量运算，如代码中演示的一样像素直接进行数学运算 (+, -, *, /, %)，需要精确计算宽度的设计人员现在可以偷着乐了! 而对于颜色变量，Sass还可以直接调节亮度、色调和饱和度！
+
+h3. 嵌套
+
+嵌套可用来表示某一个html元素与其他具有层级关系的元素之间的CSS样式关系。传统CSS的一个不便之处是当某一区域的样式教复杂时将产生大量的样式碎块，对具有复杂样式的层级关系的元素定位通常会跨越很大的文件篇幅，通常设计人员只能尽力排列这些碎块的顺序以达到方便维护的目的。但是通过Less和Sass的层级嵌套，样式定位将同html文档树一样方便快捷。
+
+{% highlight css %}
+#navbar {
+  width: 80%;
+  height: 23px;
+  ul { list-style-type: none; }
+  li {
+    float: left;
+    a { font-weight: bold; }
+  }
+}
+{% endhighlight %}
+
+编译后为：
+
+{% highlight css %}
+#navbar { width: 80%; height: 23px; }
+#navbar ul {  list-style-type: none; }
+#navbar li {  float: left; }
+#navbar li a {  font-weight: bold; }
+{% endhighlight %}
+
+看看传统CSS中最内层的a元素距离根节点navbar的文件距离吧，当这棵树上的节点变得更多时。。。。。。。。
+
+h3. 混合
+
+对于UI开发人员来讲传统CSS中比较缺乏的一个就是重用，假设有几个html元素都需要具有某一共性的样式，比如圆形边角。传统的方式要么在CSS文件中重复定义，要么在html中进行样式组合，如
+
+{% highlight html %}
+
+<div class="navbar rounded">.....</div>
+
+{% endhighlight %}
+
+但是使用Less或者Sass,可以这样直接重用样式：
+
+{% highlight css %}
+.rounded{
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+#nav1 {
+  width:100px;
+  .rounded();
+}
+{% endhighlight %}
+
+然后可自动编译为传统结构
+
+{% highlight css %}
+#nav1 {
+  width: 100px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+{% endhighlight %}
+
+p{color: red}. 这还不够，混合真正的强大之处在于其支持 *传参* ，Less甚至还支持参数默认值
+
+{% highlight css %}
+.rounded(@radius: 50px){
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+}
+#nav1 {
+  .rounded;
+}
+#nav2 {
+  .rounded(100px);
+}
+{% endhighlight %}
+
+
+编译之后为：
+
+{% highlight css %}
+#nav1 {
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+}
+#nav2 {
+  -moz-border-radius: 100px;
+  -webkit-border-radius: 100px;
+}
+{% endhighlight %}
+哇，CSS也可以编程化了。再结合Less和Sass各自的"导入"功能，设计人员的CSS库也已经有了，以后每个项目都可以直接拿来用了，日子真美好啊！
+
+
+h2. 应用
+
+Less和Sass都支持的一种使用方法是编译成传统的css文件，各自均有工具支持：
+
+{% highlight ruby %}
+lessc source.less > result.css
+{% endhighlight %}
+
+{% highlight ruby %}
+sass source.sass : result.css
+{% endhighlight %}
+
+Less还支持一种在客户端解析的方式，此方式不需要将less格式的css编译成传统型，只需要在客户端引入一个javascript文件，即可在客户端直接引用less样式文件，脚本将完成解析并展现样式。
+
+{% highlight html %}
+
+
+<link rel="stylesheet/less" type="text/css" href="styles.less" />
+
+<script src="less.js" type="text/javascript"></script>
+
+{% endhighlight %}
+
+
+而Sass将直接内置于Rails 3.1中，因此笔者猜想RoR框架中以后将可以直接使用less文件，连编译都可以省掉，而由Rails框架负责将其解析成传统CSS之后再传送至客户端。
+
+
+h2. 小结
+
+可以看到，Less和Sass之类的扩展确实为CSS的开发和维护带来了方便，甚至于它可以通过“混合”让html减少样式声明从而变得更加简洁。但是任何事物都不是完美的，得失总是同时存在的，比如“混合”可以为css开发带来方便，但是却会在最终生成的文件中产生更多的重复代码；这对关注客户端代码质量和极端要求性能的人来说可能难以接受。不过笔者总是在想，软件发展至今天，各种开发方法和开发工具的一个共同的目标都是让开发阶段变得更加高效，如此看来，这些牺牲都是值得的吧。至少笔者是这样认为的，你觉得呢？
+
+如果你想查看本站CSS的Less文件， "请点此下载":http://tech.donnior.me/css/screen.less

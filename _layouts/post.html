@@ -1,0 +1,33 @@
+---
+layout: default
+---
+
+<section id="posts-wraper" >				
+	
+	<article id="content-{{ page.identifier }}" class="article">
+		<header class="article-h">
+			<span class="article-time" title="{{ page.date | date: "%d/%m/%Y" }}">{{ page.date | date: "%m/%d" }}</span>
+			<h2><a href="{{ page.url }}">{{page.title}}</a></h2>
+		</header>
+		
+		<div class="content">
+		{{ content }}
+		</div>
+			
+		<!-- <hr />	 -->
+		<!-- start comments -->
+		<footer>
+		<div id="disqus_thread"></div>
+		
+		<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+		<!-- <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a> -->
+		<!-- end comments -->
+		</footer>
+	</article>
+				
+</section> 
+			
+<!-- <aside id="sidebar-wraper">
+
+</aside> -->
+

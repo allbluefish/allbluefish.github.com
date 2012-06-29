@@ -1,44 +1,36 @@
-<!DOCTYPE html>
-<html>
+---
+layout: default
+title: Donnior's Tech Logs
+---
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Allbluefish.github.com : " />
+<section id="posts-wraper" >				
+						
+	{% for post in  paginator.posts %}
+	<article id="content-{{post.identifier}}" class="article">
+		<header class="article-h">
+			<span class="article-time" title="{{ post.date }}">{{ post.date | date: "%m/%d" }}</span>
+			<h2><a href="{{ post.url }}">{{post.title}}</a></h2>
+		</header>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Allbluefish.github.com</title>
-  </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/allbluefish">View on GitHub</a>
-
-          <h1 id="project_title">Allbluefish.github.com</h1>
-          <h2 id="project_tagline"></h2>
-
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p>haha</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
-</html>
+		<div class="content">
+			{{ post.content }}
+		</div>		
+		
+	</article>
+	{% endfor %}
+	
+	{% if paginator.total_pages > 1 %}
+	<nav class="paginator clearfix"> 
+		 {% if paginator.previous_page == 1 %}
+			<a class="pre-article" href='/'> ←&nbsp;Previous Page </a> 
+		  {% elsif paginator.previous_page %}
+		   <a class="pre-article" href='/page{{ paginator.previous_page }}'> ←&nbsp;Previous Page </a> 
+		  {% endif %}
+		  {% if paginator.next_page %}
+		<a class="next-article" href='/page{{ paginator.next_page }}'>Next Page&nbsp;→ </a> 					
+		  {% endif %}
+	</nav> 
+	{% endif %}
+					
+</section> 
+			
